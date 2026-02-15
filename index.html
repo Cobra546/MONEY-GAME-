@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Funny Prank Website</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funny Prank App</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,13 +48,27 @@
             background: #ff1e3c;
         }
 
-        #message {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #333;
-            min-height: 50px;
+        /* Toast notification style */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 300px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s ease;
             word-wrap: break-word;
-            font-size: 16px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         @media (max-width: 400px) {
@@ -68,83 +84,97 @@
         <h2 style="font-size: 22px;">Enter Your Name 😎</h2>
         <input type="text" id="username" placeholder="Apna naam likho">
         <br>
-        <button onclick="showMessage()">Next</button>
-
-        <div id="message"></div>
+        <button onclick="handleClick()">Next</button>
     </div>
 
 <script>
-    let kainatFirstTime = true; // pehli baar track
-    let lastClickTime = 0;      // fast click track
+    // -------------------
+    // Notification & Kainat Logic
+    // -------------------
+    let kainatFirstTime = true;
+    let lastClickTime = 0;
 
-    function showMessage() {
-        var name = document.getElementById("username").value.trim();
-        var currentTime = new Date().getTime();
+    // Request notification permission
+    if('Notification' in window){
+        if(Notification.permission !== "granted"){
+            Notification.requestPermission();
+        }
+    }
 
-        if(name === "") {
+    function handleClick(){
+        let name = document.getElementById("username").value.trim();
+        let currentTime = new Date().getTime();
+
+        if(name === ""){
             alert("Pehle apna naam to likho 😂");
             return;
         }
 
-        // Special logic for "Kainat"
-        if(name.toLowerCase() === "kainat") {
+        let message = "";
 
-            if(currentTime - lastClickTime < 1000) {
-                document.getElementById("message").innerText =
-                    "🚗 Aray baji kya hogaya? Web hai tumhari gari ka horn nahi jo baar baar daba rahi ho 😂";
-                lastClickTime = currentTime;
-                return;
-            }
-
-            if(kainatFirstTime) {
-                document.getElementById("message").innerText =
-                    "😜 Ye bauny logon ke liye nahi hai!";
+        // Special Kainat logic
+        if(name.toLowerCase() === "kainat"){
+            if(currentTime - lastClickTime < 1000){
+                message = "🚗 Aray baji kya hogaya? Web hai tumhari gari ka horn nahi jo baar baar daba rahi ho 😂";
+            } else if(kainatFirstTime){
+                message = "😜 Ye bauny logon ke liye nahi hai!";
                 kainatFirstTime = false;
-                lastClickTime = currentTime;
-                return;
             }
         }
 
-        var messages = [
-            "You lost a chance to hug me 😜",
-            "You lost 1000 PKR from your wallet 💸",
-            "Your phone battery is now 1% 🔋",
-            "FBI is watching you 🚨",
-            "You missed free biryani 🍛",
-            "Your internet speed is now 2G 🐢",
-            "You forgot your ATM pin 💳",
-            "Aliens are tracking you 👽",
-            "You dropped your invisible crown 👑",
-            "You lost a chance to kiss your crush 😘💔"
-        ];
+        // Random messages for others
+        if(message === ""){
+            let messages = [
+                "You lost a chance to hug me 😜",
+                "You lost 1000 PKR from your wallet 💸",
+                "Your phone battery is now 1% 🔋",
+                "FBI is watching you 🚨",
+                "You missed free biryani 🍛",
+                "Your internet speed is now 2G 🐢",
+                "You forgot your ATM pin 💳",
+                "Aliens are tracking you 👽",
+                "You dropped your invisible crown 👑",
+                "You lost a chance to kiss your crush 😘💔"
+            ];
 
-        var funnyThings = [
-            "lost your last brain cell 🧠",
-            "accidentally sent 'I love you' to your teacher 😂",
-            "wallet is crying silently 😭",
-            "tea got cold ☕",
-            "SIM balance finished 📵",
-            "pizza fell upside down 🍕",
-            "eeee chal chal chal",
-            "Aby oo sasur ky nati aisa kantap bajengy naw sari akal tikhany ajayegi",
-            "missed 10 calls from Ammi 📞",
-            "Hum bore ho rahy hain thora naach ky tw dikhao",
-            "Aby ooo janwar ki shakal ky",
-            "camera opened automatically 📷",
-            "forgot your phone password 🔐",
-            "posted an embarrassing status 😆"
-        ];
+            let funnyThings = [
+                "lost your last brain cell 🧠",
+                "accidentally sent 'I love you' to your teacher 😂",
+                "wallet is crying silently 😭",
+                "tea got cold ☕",
+                "SIM balance finished 📵",
+                "pizza fell upside down 🍕",
+                "missed 10 calls from Ammi 📞",
+                "camera opened automatically 📷",
+                "forgot your phone password 🔐",
+                "posted an embarrassing status 😆"
+            ];
 
-        // 100 extra random notifications
-        for(let i = 0; i < 100; i++) {
-            let randomThing = funnyThings[Math.floor(Math.random() * funnyThings.length)];
-            messages.push("😆 " + name + ", You just " + randomThing + "!");
+            for(let i=0;i<100;i++){
+                let r = funnyThings[Math.floor(Math.random()*funnyThings.length)];
+                messages.push("😆 "+name+", You just "+r+"!");
+            }
+
+            message = messages[Math.floor(Math.random()*messages.length)];
         }
-
-        var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        document.getElementById("message").innerText = name + ", " + randomMessage;
 
         lastClickTime = currentTime;
+
+        // Show system notification if permitted
+        if('Notification' in window && Notification.permission === "granted"){
+            new Notification("Funny Prank", {body: message, icon:"icon-192.png"});
+        } else {
+            // fallback toast inside web
+            let toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(()=>{ toast.classList.add("show"); },50);
+            setTimeout(()=>{
+                toast.classList.remove("show");
+                setTimeout(()=>{ toast.remove(); },500);
+            },3000);
+        }
     }
 </script>
 
