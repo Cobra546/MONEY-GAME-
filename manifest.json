@@ -1,0 +1,21 @@
+{
+  "name": "Funny Prank App",
+  "short_name": "PrankApp",
+  "description": "Fun prank website with notifications",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ff9a9e",
+  "theme_color": "#ff4b5c",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
